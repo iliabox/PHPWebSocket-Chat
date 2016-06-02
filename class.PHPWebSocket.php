@@ -548,7 +548,9 @@ class PHPWebSocket
 		}
 		elseif ($opcode == self::WS_OPCODE_CLOSE) {
 			// received close message
-			if (substr($data, 1, 1) !== false) {
+			if (substr($data, 1, 1) !== false 
+                    && substr($data, 1, 1) != '' ) //ADD BECAUSE WARNING: unpack(): Type n: not enough input, need 2, have 1 
+            {
 				$array = unpack('na', substr($data, 0, 2));
 				$status = $array['a'];
 			}
@@ -653,6 +655,8 @@ class PHPWebSocket
 
 	// client write functions
 	function wsSendClientMessage($clientID, $opcode, $message) {
+        if(!isset($this->wsClients[$clientID])) { return false; }
+        
 		// check if client ready state is already closing or closed
 		if ($this->wsClients[$clientID][2] == self::WS_READY_STATE_CLOSING || $this->wsClients[$clientID][2] == self::WS_READY_STATE_CLOSED) return true;
 
@@ -715,6 +719,7 @@ class PHPWebSocket
 		return true;
 	}
 	function wsSendClientClose($clientID, $status=false) {
+        if(!isset($this->wsClients[$clientID])) { return false; }
 		// check if client ready state is already closing or closed
 		if ($this->wsClients[$clientID][2] == self::WS_READY_STATE_CLOSING || $this->wsClients[$clientID][2] == self::WS_READY_STATE_CLOSED) return true;
 
@@ -731,9 +736,11 @@ class PHPWebSocket
 
 	// client non-internal functions
 	function wsClose($clientID) {
+        if(!isset($this->wsClients[$clientID])) { return false; }
 		return $this->wsSendClientClose($clientID, self::WS_STATUS_NORMAL_CLOSE);
 	}
 	function wsSend($clientID, $message, $binary=false) {
+        if(!isset($this->wsClients[$clientID])) { return false; }
 		return $this->wsSendClientMessage($clientID, $binary ? self::WS_OPCODE_BINARY : self::WS_OPCODE_TEXT, $message);
 	}
 
