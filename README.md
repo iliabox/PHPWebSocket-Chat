@@ -1,7 +1,7 @@
 # A simple PHP WebSocket WHOIS-server example.
 
 To run, open a terminal and type:
-php ./server.php
+php backend/server.php
 
 Then visit index.html in your browser (You may need to set up a webserver to serve it).
 
